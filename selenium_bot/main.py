@@ -1,4 +1,5 @@
 import json
+import time
 
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -12,12 +13,16 @@ def main():
     # read configs
     with open('./botcfg.json') as f:
         configs = json.load(f)
+    assert configs.get('region') is not None  # TODO: actually make use of this prameter
     assert configs.get('phone') is not None
     assert configs.get('password') is not None
+    assert configs.get('server_id') is not None
+    assert configs.get('channel_name') is not None
+    configs['selenium_additional_args'] = configs.get('selenium_additional_args') or []
 
     # launch Chrome
     options = ChromeOptions()
-    for arg in configs.get('selenium_additional_args') or []:
+    for arg in configs.get('selenium_additional_args'):
         options.add_argument(arg)
     browser = Chrome(options=options)
     browser.get('https://www.kaiheila.cn/app/channels/' + configs['server_id'])
@@ -42,6 +47,15 @@ def main():
 #    message_editor = WebDriverWait(browser, 10).until(lambda x: x.find_element_by_class_name('richeditor-placeholders'))
 #    test_msg = 'test message from selenium_bot' + Keys.ENTER
 #    ActionChains(browser).click(message_editor).send_keys(test_msg).perform()
+
+    # start to play music
+    WebDriverWait(browser, 10).until(lambda x: x.find_element_by_xpath('//span[contains(@class, "connect-status")]/child::span'))
+    confirm_btn = WebDriverWait(browser, 3).until(lambda x: x.find_element_by_xpath('//span[@title="需要按键说话" and text()="需要按键说话"]/parent::*/parent::*/descendant::button'))
+    time.sleep(1)  # wait 1 sec for animation
+    ActionChains(browser).click(confirm_btn).perform()
+    ActionChains(browser).key_down(Keys.F2).perform()
+
+    return browser  # return browser instance for console debugging
 
 if __name__ == '__main__':
     main()
