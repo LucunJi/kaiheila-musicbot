@@ -14,7 +14,7 @@
 
 复制一份 `selenium_bot/botcfg-template.json` 并改名为 `botcfg.json`（文件位置不变）。以下是各条参数的填写指南。编辑时请自行搜索并参照 JSON 规范。
 
-- region: 手机区号，例如：`+86`
+- region: 手机区号，最前面不要加号，例如：`86`
 - phone：手机号码
 - password：密码
 - server_id：服务器的 id，可以在网址里找到，格式为：`https://www.kaiheila.cn/app/channels/<server_id>`
