@@ -13,9 +13,10 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 def main():
     # read configs
+    print('read configs')
     with open('./botcfg.json') as f:
         configs = json.load(f)
-    assert configs.get('region') is not None  # TODO: actually make use of this prameter
+    assert configs.get('region') is not None
     assert configs.get('phone') is not None
     assert configs.get('password') is not None
     assert configs.get('server_id') is not None
@@ -23,17 +24,20 @@ def main():
     configs['selenium_additional_args'] = configs.get('selenium_additional_args') or []
 
     # launch Chrome
+    print('launch Chrome browser')
     options = ChromeOptions()
     for arg in configs.get('selenium_additional_args'):
         options.add_argument(arg)
-    # driver = Chrome(options=options)
-    driver = Remote(command_executor='http://localhost:4444', options=options)
+    driver = Chrome(options=options)
+    # driver = Remote(command_executor='http://localhost:4444', options=options)
 
     # login
+    print('log into kaiheila server')
     # selenium_login(driver, configs)
     requests_login(driver, configs)  # a faster way of login
 
     # join channel
+    print('enter the sound channel')
     channel_label_xpath = '//span[@title="{0}" and text()="{0}"]'.format(configs['channel_name'])
     channel_label = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath(channel_label_xpath))
     ActionChains(driver).double_click(channel_label).perform()
@@ -44,6 +48,7 @@ def main():
 #    ActionChains(driver).click(message_editor).send_keys(test_msg).perform()
 
     # start to play music
+    print('start to play music')
     WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath('//span[contains(@class, "connect-status")]/child::span'))
     confirm_btn = WebDriverWait(driver, 3).until(lambda x: x.find_element_by_xpath('//span[@title="需要按键说话" and text()="需要按键说话"]/parent::*/parent::*/descendant::button'))
     time.sleep(1)  # wait 1 sec for animation
