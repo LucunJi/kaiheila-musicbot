@@ -1,7 +1,7 @@
 import json
 import time
 
-from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver import Chrome, ChromeOptions, Remote
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located as can_find
 from selenium.webdriver.common.action_chains import ActionChains
@@ -24,7 +24,8 @@ def main():
     options = ChromeOptions()
     for arg in configs.get('selenium_additional_args'):
         options.add_argument(arg)
-    browser = Chrome(options=options)
+    # browser = Chrome(options=options)
+    browser = Remote(command_executor='http://localhost:4444', options=options)
     browser.get('https://www.kaiheila.cn/app/channels/' + configs['server_id'])
 
     # login
@@ -58,5 +59,6 @@ def main():
     return browser  # return browser instance for console debugging
 
 if __name__ == '__main__':
-    main()
+    browser = main()
     input('press any key to quit...')
+    browser.quit()

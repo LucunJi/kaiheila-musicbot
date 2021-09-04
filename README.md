@@ -6,7 +6,7 @@
 
 **使用之前请先根据 设置 这一小节进行配置**
 
-使用 selenium + docker + pulseaudio 实现自动进入频道并输出音乐
+使用 Selenium + Docker + PulseAudio 实现自动登录，进入频道并输出音乐
 
 未完工。
 
@@ -24,3 +24,4 @@
 ## 引用/Credits
 
 整体架构参考了：https://superuser.com/questions/1223118/emulating-microphone-input-to-chrome-inside-docker-container
+Selenium Chrome 与 headless 相关的设置（懒得到处翻文档了）：https://stackoverflow.com/questions/53657215/running-selenium-with-headless-chrome-webdriver
