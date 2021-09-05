@@ -10,9 +10,13 @@ pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.des
 pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
 pactl set-default-sink vspeaker
 pactl set-default-source vmic
+echo "show all sources"
+pactl list short sources
+echo "show all sinks"
+pactl list short sinks
+
+echo "run music bot"
+python3 main.py &
 
 echo "run default entrypoint"
 /opt/bin/entry_point.sh
-
-echo "run music bot"
-python main.py
