@@ -5,6 +5,9 @@
     "server_id": "",
     "channel_name": "",
     "selenium_additional_args": [
-        "--use-fake-ui-for-media-stream"
+        "--use-fake-ui-for-media-stream",
+        "--mute-audio",
+        "--headless",
+        "--disable-gpu"
     ]
 }
