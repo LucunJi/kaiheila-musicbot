@@ -10,10 +10,13 @@ RUN apt-get -qq update
 RUN apt-get -y install python3-pip
 RUN pip install pipenv
 
-USER seluser
+# just for playing mp3 files
+RUN apt-get install -y mpg123
 
 COPY entrypoint.sh /opt/bin/entrypoint.sh
-# RUN chmod +x /opt/bin/entrypoint.sh
+RUN chmod +x /opt/bin/entrypoint.sh  # this line required on some computers
+
+USER seluser
 
 # copy the Pipfile first to better utilize docker cache
 COPY selenium_bot/Pipfile selenium_bot/Pipfile.lock /app/

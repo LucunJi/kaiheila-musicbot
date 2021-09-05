@@ -1,1 +1,1 @@
-docker build . -t kaiheila-musicbot
+docker build . -t lucunji/kaiheila-musicbot
