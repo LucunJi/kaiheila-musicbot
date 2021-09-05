@@ -29,8 +29,7 @@ def main():
     options = ChromeOptions()
     for arg in configs.get('selenium_additional_args'):
         options.add_argument(arg)
-    driver = Chrome(options=options)
-    # driver = Remote(command_executor='http://localhost:4444', options=options)
+    driver = Remote(command_executor='http://localhost:4444', options=options)
 
     try:
         start_stream(driver, configs)

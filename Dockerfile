@@ -10,7 +10,7 @@ RUN apt-get -qq update && apt-get install -y pulseaudio
 USER seluser
 
 # copy over music files
-COPY test-musics /opt/
+COPY test-musics /opt/test-musics
 
 # use custom entrypoint
 COPY entrypoint.sh /opt/bin/entrypoint.sh
