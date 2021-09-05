@@ -19,7 +19,6 @@ COPY entrypoint.sh /opt/bin/entrypoint.sh
 COPY selenium_bot/Pipfile selenium_bot/Pipfile.lock /app/
 RUN pipenv install --system --deploy --ignore-pipfile
 
-COPY test-musics/ /app/test-musics/
 COPY selenium_bot/ /app/
 
 ENTRYPOINT /opt/bin/entrypoint.sh
