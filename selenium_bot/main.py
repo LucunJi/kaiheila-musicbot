@@ -1,5 +1,6 @@
 import json
 import time
+import logging
 
 import requests
 
@@ -13,7 +14,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 def main():
     # read configs
-    print('read configs')
+    logging.info('read configs')
     with open('./botcfg.json') as f:
         configs = json.load(f)
     assert configs.get('region') is not None
@@ -24,20 +25,56 @@ def main():
     configs['selenium_additional_args'] = configs.get('selenium_additional_args') or []
 
     # launch Chrome
-    print('launch Chrome browser')
+    logging.info('launch Chrome browser')
     options = ChromeOptions()
     for arg in configs.get('selenium_additional_args'):
         options.add_argument(arg)
     driver = Chrome(options=options)
     # driver = Remote(command_executor='http://localhost:4444', options=options)
 
+    try:
+        start_stream(driver, configs)
+    except Exception as e:
+        raise e
+
+    return driver
+
+def start_stream(driver, configs):
+    driver.get('https://www.kaiheila.cn')
+
+    # set audio configs, must be in some html web page
+    logging.info('set audio configs')
+    audio_configs = {
+        'selectedMicrophoneId': 'default',
+        'selectedHeadphoneId': 'default',
+        'inputVolume': 100,
+        'outputVolume': 0,  # set to 0 to prevent echo
+        'inputMode': 'keypress',
+        'keypressDelay': 0,
+        'openInputKey': [113],  # F2
+        'closeInputKey': [],
+        'quickMuteKey': [],
+        'autoSens': True,
+        'sensitivity': -90,
+        'echoCancellation': False,  # set this to False to improve sound quality
+        'noiseCancellation': False,  # set this to False to improve sound quality
+        'soundGain': False,  # set this to False to improve sound quality
+        'isInputMuted': False,
+        'isMuted': False,
+        'usersVolume': {},  # uid - volume pair(int)
+        'overlay': True,
+        'autoSelectDeviceShow': False,  # set to False to auto detect the default devices of your OS
+        'lastConnectAudioInfo': {}
+    }
+    driver.execute_script("localStorage.setItem('KAIHEI_AUDIO_CONFIG', '{}');".format(json.dumps(audio_configs)))
+    logging.debug('audio configs is set to\n', driver.execute_script('return localStorage.getItem("KAIHEI_AUDIO_CONFIG");'))
+
     # login
-    print('log into kaiheila server')
-    # selenium_login(driver, configs)
+    logging.info('login into kaiheila server')
     requests_login(driver, configs)  # a faster way of login
 
     # join channel
-    print('enter the sound channel')
+    logging.info('enter the sound channel')
     channel_label_xpath = '//span[@title="{0}" and text()="{0}"]'.format(configs['channel_name'])
     channel_label = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath(channel_label_xpath))
     ActionChains(driver).double_click(channel_label).perform()
@@ -48,11 +85,13 @@ def main():
 #    ActionChains(driver).click(message_editor).send_keys(test_msg).perform()
 
     # start to play music
-    print('start to play music')
-    WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath('//span[contains(@class, "connect-status")]/child::span'))
-    confirm_btn = WebDriverWait(driver, 3).until(lambda x: x.find_element_by_xpath('//span[@title="需要按键说话" and text()="需要按键说话"]/parent::*/parent::*/descendant::button'))
-    time.sleep(1)  # wait 1 sec for animation
-    ActionChains(driver).click(confirm_btn).perform()
+    logging.info('start to play music')
+    WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath('//span[contains(@class, "connect-status")]/child::span[text()="语音已连接"]'))
+    # no need of clicking the confirming button since it's configured
+    # confirm_btn = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath('//span[@title="需要按键说话" and text()="需要按键说话"]/parent::*/parent::*/descendant::button'))
+    # time.sleep(1)  # wait 1 sec for animation
+    # ActionChains(driver).click(confirm_btn).perform()
+    time.sleep(3)  # wait few secs until it is ready to accept key input
     ActionChains(driver).key_down(Keys.F2).perform()
 
     return driver  # return driver instance for console debugging
@@ -83,7 +122,6 @@ def requests_login(driver, configs):
         'password': configs['password'],
         'remember': 'false'
     })
-    driver.get('https://www.kaiheila.cn')
     for cookie in response.cookies:
         driver.add_cookie({
             'name': cookie.name,
@@ -94,6 +132,7 @@ def requests_login(driver, configs):
     driver.get('https://www.kaiheila.cn/app/channels/' + configs['server_id'])
 
 if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.INFO)
     driver = main()
     input('press any key to quit...')
     driver.quit()
