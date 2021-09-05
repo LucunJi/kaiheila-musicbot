@@ -1,5 +1,6 @@
 selenium_bot/botcfg.json
 test-musics/*
+**.log
 
 # Vim
 **/*.swp

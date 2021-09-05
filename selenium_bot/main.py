@@ -3,12 +3,10 @@ import time
 import logging
 from signal import signal, SIGINT
 from sys import exit
-import os
-from datetime import datetime
 
 import requests
 
-from selenium.webdriver import ChromeOptions, Remote
+from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -27,17 +25,12 @@ def main():
     options = ChromeOptions()
     for arg in configs.selenium_additional_args:
         options.add_argument(arg)
-    driver = Remote(command_executor='http://localhost:4444', options=options)
-    # from selenium.webdriver import Chrome
-    # driver = Chrome(options=options)
+    driver = Chrome('/usr/bin/chromedriver', options=options)
 
     signal(SIGINT, lambda signal_received, frame: quit_and_exit(driver))
 
     try:
         start_stream(driver, configs)
-        while True:
-            save_screenshot(driver)
-            time.sleep(30)
     except Exception as e:
         raise e
 
@@ -94,20 +87,13 @@ def set_audio_configs(driver, configs):
     logging.debug('audio configs is set to\n', driver.execute_script(JScripts.GET_LOCALSTORAGE))
 
 
-def save_screenshot(driver):
-    if not os.path.isdir('/home/seluser/selenium_sc'):
-        os.mkdir('/home/seluser/selenium_sc')
-    driver.save_screenshot(
-        datetime.now().strftime('/home/seluser/selenium_sc/%Y-%m-%d_%H-%M-%S-%f.png'))
-
-
 def quit_and_exit(driver):
     driver.quit()
     exit(1)
 
 
 if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger().setLevel(logging.DEBUG)
     driver = main()
     input('press any key to quit...')
     driver.quit()
