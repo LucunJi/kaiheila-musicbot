@@ -97,7 +97,7 @@ def make_login_requests(driver, configs):
 def set_audio_configs(driver, configs):
     audio_config_string = json.dumps(DEFAULT_AUDIO_CONFIGS)
     driver.execute_script(JScripts.SET_LOCALSTORAGE_PATTERN.format(audio_config_string))
-    logging.debug('audio configs is set to\n', driver.execute_script(JScripts.GET_LOCALSTORAGE))
+    logging.debug('audio configs is set to\n' + str(driver.execute_script(JScripts.GET_LOCALSTORAGE)))
 
 
 def on_sigint(driver):
@@ -107,7 +107,7 @@ def on_sigint(driver):
 
 
 if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.INFO)
     driver = main()
     input('press any key to quit...')
     driver.quit()

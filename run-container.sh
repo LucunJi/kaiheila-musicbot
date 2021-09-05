@@ -1,1 +1,1 @@
-docker run -d -p 4444:4444 --shm-size=2g --name kaiheila-musicbot kaiheila-musicbot
+docker run -d --shm-size=2g -e TZ="America/Chicago" --name kaiheila-musicbot kaiheila-musicbot
