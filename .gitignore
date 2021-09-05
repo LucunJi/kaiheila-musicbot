@@ -1,5 +1,8 @@
 selenium_bot/botcfg.json
-test-musics/
+test-musics/*
 
 # Vim
 **/*.swp
+
+# Intellij PyCharm
+.idea
