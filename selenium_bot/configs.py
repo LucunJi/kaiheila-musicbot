@@ -1,16 +1,14 @@
-import json
+import os
 
 
 class BotConfigs:
     def __init__(self):
-        with open('./botcfg.json') as f:
-            configs = json.load(f)
-        self.region = configs['region']
-        self.phone = configs['phone']
-        self.password = configs['password']
-        self.server_id = configs['server_id']
-        self.channel_name = configs['channel_name']
-        self.selenium_additional_args = configs['selenium_additional_args']
+        self.phone_prefix = os.environ['BOT_PHONE_PREFIX']
+        self.phone = os.environ['BOT_PHONE']
+        self.password = os.environ['BOT_PASSWORD']
+        self.server_id = os.environ['BOT_SERVER_ID']
+        self.channel_name = os.environ['BOT_CHANNEL_NAME']
+        self.selenium_additional_args = os.environ['BOT_SELENIUM_ADDITIONAL_ARGS']
 
 
 DEFAULT_AUDIO_CONFIGS = {

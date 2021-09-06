@@ -1,6 +1,14 @@
-selenium_bot/botcfg.json
+# config files may contain sensitive information
+**/*.env
+
+# old config files, keep them ignored just in case
+**/botcfg.json
+
+# the test musics may have copyright issues, and are too big for git
 test-musics/*
-**.log
+
+# log files, you certainly do not want to leak them
+**/*.log
 
 # Vim
 **/*.swp

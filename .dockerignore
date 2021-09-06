@@ -1,2 +1,21 @@
-selenium/.git
-selenium/botcfg-template.json
+.git
+
+# Vim
+**/*.swp
+
+# Intellij PyCharm
+.idea
+
+# config files may contain sensitive information
+**/*.env
+**/*.envtemplate
+
+# old config files, keep them ignored just in case
+selenium_bot/botcfg-template.json
+selenium_bot/botcfg.json
+
+# the test musics may have copyright issues, and are too big for git
+test-musics/*
+
+# log files, you certainly do not want to leak them
+**/*.log
