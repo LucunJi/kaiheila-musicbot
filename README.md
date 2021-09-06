@@ -36,5 +36,7 @@
 ## 引用/Credits
 
 整体架构参考了：https://superuser.com/questions/1223118/emulating-microphone-input-to-chrome-inside-docker-container
+
 pactl 的调教参考了：https://askubuntu.com/questions/1338747/virtual-audio-sink-virtual-audio-cable-on-ubuntu
+
 Selenium Chrome 与 headless 相关的设置（懒得到处翻文档了）：https://stackoverflow.com/questions/53657215/running-selenium-with-headless-chrome-webdriver
