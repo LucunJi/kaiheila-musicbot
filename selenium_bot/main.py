@@ -8,42 +8,49 @@ import requests
 
 from urllib3.exceptions import MaxRetryError
 
-from selenium.webdriver import ChromeOptions, Remote
+from selenium.webdriver import ChromeOptions, Remote, Chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from configs import BotConfigs, DEFAULT_AUDIO_CONFIGS
+from configs import BotConfigs, DEFAULT_AUDIO_CONFIGS, GeneralConfigs
 from constants import Urls, XPaths, JScripts
 
 
 def main():
     # read configs
     logging.info('read configs')
-    configs = BotConfigs()
+    general_configs = GeneralConfigs()
+    logging.getLogger().setLevel(general_configs.log_level)
+    bot_configs = BotConfigs()
 
     # launch Chrome
     logging.info('launch Chrome browser')
     options = ChromeOptions()
-    options.add_argument(configs.selenium_additional_args)
-    while True:
-        try:
-            driver = Remote(command_executor='http://localhost:4444', options=options)
-        except MaxRetryError:
-            print('cannot connect to remote chrome, retrying...')
-            time.sleep(3)
-        else:
-            break
+    for a in bot_configs.selenium_additional_args.split(' '):
+        options.add_argument(a)
+    if general_configs.test_local_chrome_browser:
+        driver = Chrome(options=options)
+    else:
+        while True:
+            try:
+                driver = Remote(command_executor='http://localhost:4444', options=options)
+            except MaxRetryError:
+                logging.debug('cannot connect to remote selenium server, maybe it is not ready yet, retrying...')
+                time.sleep(3)
+            else:
+                break
 
     signal(SIGINT, lambda signal_received, frame: on_sigint(driver))
 
     try:
-        start_stream(driver, configs)
+        start_stream(driver, bot_configs)
         while True:
             time.sleep(10)
             # a random command to prevent the session from deleted
             driver.find_element_by_tag_name('body')
     except Exception as e:
+        driver.quit()
         raise e
 
     return driver
@@ -83,6 +90,10 @@ def make_login_requests(driver, configs):
         'password': configs.password,
         'remember': 'false'
     })
+    if response.cookies.get('auth') is None:
+        raise PermissionError(
+            'LOGIN FAILED! '
+            'PLEASE MANUALLY VERIFY IF YOUR ACCOUNT CAN BE USED NORMALLY WITHOUT CAPTCHA.')
     for cookie in response.cookies:
         driver.add_cookie({
             'name': cookie.name,
@@ -96,7 +107,8 @@ def make_login_requests(driver, configs):
 def set_audio_configs(driver, configs):
     audio_config_string = json.dumps(DEFAULT_AUDIO_CONFIGS)
     driver.execute_script(JScripts.SET_LOCALSTORAGE_PATTERN.format(audio_config_string))
-    logging.debug('audio configs is set to\n' + str(driver.execute_script(JScripts.GET_LOCALSTORAGE)))
+    logging.debug('audio configs is set to\n' +
+                  str(driver.execute_script(JScripts.GET_LOCALSTORAGE)))
 
 
 def on_sigint(driver):
@@ -106,7 +118,6 @@ def on_sigint(driver):
 
 
 if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
     driver = main()
     input('press any key to quit...')
     driver.quit()

@@ -16,22 +16,18 @@
 - [x] 使用 pactl 将音频输出重定向至输入播放声音
 - [x] 关闭开黑啦语音设置里的所有语音改善选项，提高音质
 - [x] 将 Python 脚本，Selenium 和 pactl 初始化脚本打包进 Docker 镜像， 提升可移植性并减少对主机的魔改
-- [ ] 把设置选项全部移入环境变量，增加安全性
+- [x] 把设置选项全部移入环境变量，增加安全性
 - [ ] 使用语音频道邀请链接替代服务器id和频道名称
+- [ ] bot 被移动到别的语音频道后重新按下语音按键
 - [ ] 可以接受来自另一个文字频道的用户指令，进行基本的播放/暂停/音量操作
 - [ ] 点歌功能
 - [ ] 多平台点歌功能
 
 ## 设置/Config
 
-复制一份 `selenium_bot/botcfg-template.json` 并改名为 `botcfg.json`（文件位置不变）。以下是各条参数的填写指南。编辑时请自行搜索并参照 JSON 规范。
+将 `.env.template` 和 `botcfg.env.template` 各复制一份并去除 `.template` 后缀。按照文件注释填写。
 
-- region: 手机区号，最前面不要加号，例如：`86`
-- phone：手机号码
-- password：密码
-- server_id：服务器的 id，可以在网址里找到，格式为：`https://www.kaiheila.cn/app/channels/<server_id>`
-- channel_name：频道名字
-- selenium_additional_args：selenium 启动 Chrome 浏览器时可以使用的默认参数。**请不要在不知道确切用途的情况下改动已有的参数**
+一般来说只需要修改 `botcfg.env` 就行了。
 
 ## 引用/Credits
 

@@ -8,7 +8,6 @@
 
 # config files may contain sensitive information
 **/*.env
-**/*.envtemplate
 
 # old config files, keep them ignored just in case
 selenium_bot/botcfg-template.json

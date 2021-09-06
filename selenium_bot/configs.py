@@ -1,4 +1,5 @@
 import os
+import logging
 
 
 class BotConfigs:
@@ -9,6 +10,14 @@ class BotConfigs:
         self.server_id = os.environ['BOT_SERVER_ID']
         self.channel_name = os.environ['BOT_CHANNEL_NAME']
         self.selenium_additional_args = os.environ['BOT_SELENIUM_ADDITIONAL_ARGS']
+
+
+class GeneralConfigs:
+    def __init__(self):
+        self.test_local_chrome_browser = \
+            (os.environ.get('TEST_LOCAL_CHROME_BROWSER') or 'False').lower() == 'true'
+        log_level_raw = logging.getLevelName(os.environ.get('LOG_LEVEL') or 'INFO')
+        self.log_level = log_level_raw if isinstance(log_level_raw, (int, float)) else logging.INFO
 
 
 DEFAULT_AUDIO_CONFIGS = {
