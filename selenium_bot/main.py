@@ -25,8 +25,7 @@ def main():
     # launch Chrome
     logging.info('launch Chrome browser')
     options = ChromeOptions()
-    for arg in configs.selenium_additional_args:
-        options.add_argument(arg)
+    options.add_argument(configs.selenium_additional_args)
     while True:
         try:
             driver = Remote(command_executor='http://localhost:4444', options=options)
@@ -80,7 +79,7 @@ def start_stream(driver, configs):
 def make_login_requests(driver, configs):
     response = requests.post(Urls.KAIHEILA_LOGIN, data={
         'mobile': configs.phone,
-        'mobile_prefix': configs.region,
+        'mobile_prefix': configs.phone_prefix,
         'password': configs.password,
         'remember': 'false'
     })
