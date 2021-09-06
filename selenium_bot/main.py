@@ -93,7 +93,10 @@ def make_login_requests(driver, configs):
     if response.cookies.get('auth') is None:
         raise PermissionError(
             'LOGIN FAILED! '
-            'PLEASE MANUALLY VERIFY IF YOUR ACCOUNT CAN BE USED NORMALLY WITHOUT CAPTCHA.')
+            'PLEASE MANUALLY VERIFY IF YOUR ACCOUNT CAN BE USED NORMALLY WITHOUT CAPTCHA.'
+            '\nHeader: ' + str(response.headers)
+            + '\nCookies: ' + str(response.cookies)
+            + '\n Response: ' + str(response.text))
     for cookie in response.cookies:
         driver.add_cookie({
             'name': cookie.name,
