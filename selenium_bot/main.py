@@ -5,6 +5,7 @@ from signal import signal, SIGINT
 from sys import exit
 
 import requests
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from urllib3.exceptions import MaxRetryError
 
@@ -24,66 +25,67 @@ def main():
     logging.getLogger().setLevel(general_configs.log_level)
     bot_configs = BotConfigs()
 
-    # launch Chrome
     logging.info('launch Chrome browser')
-    options = ChromeOptions()
-    for a in bot_configs.selenium_additional_args.split(' '):
-        options.add_argument(a)
-    if general_configs.test_local_chrome_browser:
-        driver = Chrome(options=options)
-    else:
-        while True:
-            try:
-                driver = Remote(command_executor='http://localhost:4444', options=options)
-            except MaxRetryError:
-                logging.debug('cannot connect to remote selenium server, maybe it is not ready yet, retrying...')
-                time.sleep(3)
-            else:
-                break
+    bot_driver = launch_chrome(general_configs)
 
-    signal(SIGINT, lambda signal_received, frame: on_sigint(driver))
+    signal(SIGINT, lambda signal_received, frame: on_sigint(bot_driver))
 
     try:
-        start_stream(driver, bot_configs)
+        start_stream(bot_driver, bot_configs)
         while True:
             time.sleep(10)
             # a random command to prevent the session from deleted
-            driver.find_element_by_tag_name('body')
+            bot_driver.find_element_by_tag_name('body')
     except Exception as e:
-        driver.quit()
+        bot_driver.quit()
         raise e
 
-    return driver
+    return bot_driver
 
 
-def start_stream(driver, configs):
-    driver.get(Urls.KAIHEILA_HOME)
+def launch_chrome(configs: GeneralConfigs) -> WebDriver:
+    options = ChromeOptions()
+    for a in configs.selenium_additional_args.split(' '):
+        options.add_argument(a)
+    if configs.test_local_chrome_browser:
+        bot_driver = Chrome(options=options)
+    else:
+        while True:
+            try:
+                bot_driver = Remote(command_executor=Urls.SELENIUM_CMD_EXECUTOR, options=options)
+            except MaxRetryError:
+                logging.debug(
+                    'cannot connect to remote selenium server, maybe it is not ready yet, '
+                    'retrying...')
+                time.sleep(3)
+            else:
+                break
+    return bot_driver
+
+
+def start_stream(bot_driver: WebDriver, configs: BotConfigs):
+    bot_driver.get(Urls.KAIHEILA_HOME)
 
     # set audio configs, must be in some html web page
     logging.info('set audio configs')
-    set_audio_configs(driver, configs)
+    set_audio_configs(bot_driver, configs)
 
-    # login
     logging.info('login into kaiheila server')
-    make_login_requests(driver, configs)  # a faster way of login
+    try_login(bot_driver, configs)
 
-    # join channel
     logging.info('enter the sound channel')
-    channel_label_xpath = XPaths.CHANNEL_LABEL_PATTERN.format(configs.channel_name)
-    channel_label = WebDriverWait(driver, 30).until(
-        lambda x: x.find_element_by_xpath(channel_label_xpath))
-    ActionChains(driver).double_click(channel_label).perform()
+    bot_driver.get(configs.voice_channel_link)
 
-    # start to play music
-    logging.info('start to play music')
-    WebDriverWait(driver, 30).until(lambda x: x.find_element_by_xpath(XPaths.VOICE_CONNECTED))
+    logging.info('wait for page to finish loading...')
+    WebDriverWait(bot_driver, 30).until(lambda x: x.find_element_by_xpath(XPaths.VOICE_CONNECTED))
     time.sleep(3)  # wait few secs until it is ready to accept key input
-    ActionChains(driver).key_down(Keys.F2).perform()
+    ActionChains(bot_driver).key_down(Keys.F2).perform()
+    logging.info('ready to play some music')
 
-    return driver  # return driver instance for console debugging
+    return bot_driver  # return driver instance for console debugging
 
 
-def make_login_requests(driver, configs):
+def try_login(bot_driver: WebDriver, configs: BotConfigs):
     response = requests.post(Urls.KAIHEILA_LOGIN, data={
         'mobile': configs.phone,
         'mobile_prefix': configs.phone_prefix,
@@ -92,31 +94,29 @@ def make_login_requests(driver, configs):
     })
     if response.cookies.get('auth') is None:
         raise PermissionError(
-            'LOGIN FAILED! '
-            'PLEASE MANUALLY VERIFY IF YOUR ACCOUNT CAN BE USED NORMALLY WITHOUT CAPTCHA.'
-            '\nHeader: ' + str(response.headers)
-            + '\nCookies: ' + str(response.cookies)
-            + '\n Response: ' + str(response.text))
+            ('LOGIN FAILED! '
+             'PLEASE MANUALLY VERIFY IF YOUR ACCOUNT CAN BE USED NORMALLY WITHOUT CAPTCHA.'
+             '\nHeader: {}\nCookies: {}\nResponse: {}')
+            .format(response.headers, response.cookies, response.text))
     for cookie in response.cookies:
-        driver.add_cookie({
+        bot_driver.add_cookie({
             'name': cookie.name,
             'value': cookie.value,
             'path': cookie.path,
             'domain': cookie.domain
         })
-    driver.get(Urls.KAIHEILA_SERVER_PATTERN.format(configs.server_id))
 
 
-def set_audio_configs(driver, configs):
+def set_audio_configs(bot_driver: WebDriver, configs: BotConfigs):
     audio_config_string = json.dumps(DEFAULT_AUDIO_CONFIGS)
-    driver.execute_script(JScripts.SET_LOCALSTORAGE_PATTERN.format(audio_config_string))
+    bot_driver.execute_script(JScripts.SET_LOCALSTORAGE_PATTERN.format(audio_config_string))
     logging.debug('audio configs is set to\n' +
-                  str(driver.execute_script(JScripts.GET_LOCALSTORAGE)))
+                  str(bot_driver.execute_script(JScripts.GET_LOCALSTORAGE)))
 
 
-def on_sigint(driver):
+def on_sigint(bot_driver: WebDriver):
     logging.info('received signal SIGINT, exit...')
-    driver.quit()
+    bot_driver.quit()
     exit(1)
 
 

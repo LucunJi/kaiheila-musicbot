@@ -7,15 +7,14 @@ class BotConfigs:
         self.phone_prefix = os.environ['BOT_PHONE_PREFIX']
         self.phone = os.environ['BOT_PHONE']
         self.password = os.environ['BOT_PASSWORD']
-        self.server_id = os.environ['BOT_SERVER_ID']
-        self.channel_name = os.environ['BOT_CHANNEL_NAME']
-        self.selenium_additional_args = os.environ['BOT_SELENIUM_ADDITIONAL_ARGS']
+        self.voice_channel_link = os.environ['BOT_VOICECHAN_LINK']
 
 
 class GeneralConfigs:
     def __init__(self):
         self.test_local_chrome_browser = \
             (os.environ.get('TEST_LOCAL_CHROME_BROWSER') or 'False').lower() == 'true'
+        self.selenium_additional_args = os.environ['SELENIUM_ADDITIONAL_ARGS']
         log_level_raw = logging.getLevelName(os.environ.get('LOG_LEVEL') or 'INFO')
         self.log_level = log_level_raw if isinstance(log_level_raw, (int, float)) else logging.INFO
 
