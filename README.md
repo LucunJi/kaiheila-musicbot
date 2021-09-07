@@ -29,6 +29,26 @@
 
 一般来说只需要修改 `botcfg.env` 就行了。
 
+## 运行/Launch
+
+目前有两种方法可以运行这个 bot：
+
+1. 你可以直接从 Docker 拉取镜像并运行， 当然你得事先在当前目录下准备好 `.env` 以及 `botcfg.env` 这两个配置文件，并且把需要播放的音乐都放进 `test-musics` 这个文件夹
+
+    `docker run -d --shm-size=2g -v $PWD/test-musics:/app/test-musics:ro --env-file botcfg.env --env-file .env --name kaiheila-musicbot lucunji/kaiheila-musicbot:0.0.1`
+
+
+2. 或者，你可以下载这个 GitHub 仓库，然后依次运行 `build-container.sh` 和 `run-container.sh` 这两个脚本。
+
+### 播放音乐
+
+这个 bot 目前没有自动播放音乐或点歌功能。你需要将 `.mp3` 格式的音乐文件放到 `test-musics` 目录中，运行
+
+`docker exec -it kaiheila-musicbot bash`
+
+进入运行中的 Docker 容器，然后手动用预装的 `mpg123` 播放 `/app/test-musics` 目录下的音乐。
+
+
 ## 引用/Credits
 
 整体架构参考了：https://superuser.com/questions/1223118/emulating-microphone-input-to-chrome-inside-docker-container
