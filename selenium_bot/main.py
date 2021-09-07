@@ -73,10 +73,18 @@ def start_stream(bot_driver: WebDriver, configs: BotConfigs):
     logging.info('login into kaiheila server')
     try_login(bot_driver, configs)
 
-    logging.info('enter the sound channel')
-    bot_driver.get(configs.voice_channel_link)
+    logging.info('enter the server')
+    bot_driver.get(Urls.KAIHEILA_SERVER_PATTERN.format(configs.server_id))
 
-    logging.info('wait for page to finish loading...')
+    logging.info('wait for the page to finish loading...')
+    channel_label_xpath = XPaths.CHANNEL_LABEL_PATTERN.format(configs.channel_name)
+    channel_label = WebDriverWait(bot_driver, 30).until(
+        lambda x: x.find_element_by_xpath(channel_label_xpath))
+
+    logging.info('join the voice channel')
+    ActionChains(bot_driver).double_click(channel_label).perform()
+
+    logging.info('wait for the voice channel to finish loading...')
     WebDriverWait(bot_driver, 30).until(lambda x: x.find_element_by_xpath(XPaths.VOICE_CONNECTED))
     time.sleep(3)  # wait few secs until it is ready to accept key input
     ActionChains(bot_driver).key_down(Keys.F2).perform()

@@ -7,7 +7,8 @@ class BotConfigs:
         self.phone_prefix = os.environ['BOT_PHONE_PREFIX']
         self.phone = os.environ['BOT_PHONE']
         self.password = os.environ['BOT_PASSWORD']
-        self.voice_channel_link = os.environ['BOT_VOICECHAN_LINK']
+        self.server_id = os.environ['BOT_SERVER_ID']
+        self.channel_name = os.environ['BOT_CHANNEL_NAME']
 
 
 class GeneralConfigs:
