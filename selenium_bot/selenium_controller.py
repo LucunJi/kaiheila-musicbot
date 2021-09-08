@@ -45,23 +45,7 @@ class SeleniumController:
         options = ChromeOptions()
         for a in self.config_general.selenium_additional_args.split(' '):
             options.add_argument(a)
-        if self.config_general.test_local_chrome_browser:
-            chrome_driver = Chrome(options=options)
-        else:
-            # keep retrying until a connection is made
-            # TODO: use threading to avoid blocking behavior
-            while True:
-                try:
-                    chrome_driver = Remote(command_executor=Urls.SELENIUM_CMD_EXECUTOR,
-                                           options=options)
-                except MaxRetryError:
-                    logger.debug(
-                        'cannot connect to remote selenium server, maybe it is not ready yet, '
-                        'retrying...')
-                    time.sleep(3)
-                else:
-                    break
-        return chrome_driver
+        return Chrome(options=options)
 
     def set_audio_configs(self):
         """Sets bot's audio configs."""
@@ -113,14 +97,6 @@ class SeleniumController:
         time.sleep(3)  # wait few secs until it is ready to accept key input
         ActionChains(self.driver).key_down(Keys.F2).perform()
         logger.info('ready to play some music')
-
-    def keep_session(self):
-        """Keeps the session from deleted for inactive by sending useless commands."""
-        logger.info('start keeping session alive...')
-        while True:
-            time.sleep(10)
-            # a random command to prevent the session from deleted
-            _ = self.driver.current_url
 
     def quit(self):
         """Quits and cleans up everything."""

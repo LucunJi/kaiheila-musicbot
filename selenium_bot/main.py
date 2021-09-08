@@ -1,5 +1,6 @@
 import logging
 import logging.config
+import time
 
 from configs import BotConfigs, GeneralConfigs, DEFAULT_LOG_FORMAT, DEFAULT_LOG_DATEFMT
 from selenium_controller import SeleniumController
@@ -14,11 +15,11 @@ def main():
     logging.basicConfig(level=config_general.log_level)
     config_bot = BotConfigs()
 
-    with SeleniumController(config_bot, config_general) as controller:
-        controller.join_voice_channel()
-        controller.keep_session()
+    SeleniumController(config_bot, config_general).join_voice_channel()
 
 
 if __name__ == '__main__':
     main()
-    input('press any key to quit...')
+    # multi-thread code is not written yet, so just make an infinite loop
+    while True:
+        time.sleep(10)

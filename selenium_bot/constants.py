@@ -1,5 +1,4 @@
 class Urls:
-    SELENIUM_CMD_EXECUTOR = 'http://localhost:4444'
     KAIHEILA_HOME = 'https://www.kaiheila.cn'
     KAIHEILA_LOGIN = 'https://www.kaiheila.cn/api/v2/auth/login'
     KAIHEILA_SERVER_PATTERN = 'https://www.kaiheila.cn/app/channels/{}'

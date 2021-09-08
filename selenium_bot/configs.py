@@ -13,8 +13,6 @@ class BotConfigs:
 
 class GeneralConfigs:
     def __init__(self):
-        self.test_local_chrome_browser = \
-            (os.environ.get('TEST_LOCAL_CHROME_BROWSER') or 'False').lower() == 'true'
         self.selenium_additional_args = os.environ['SELENIUM_ADDITIONAL_ARGS']
         self.log_level = logging.getLevelName(os.environ.get('LOG_LEVEL') or 'INFO')
 
