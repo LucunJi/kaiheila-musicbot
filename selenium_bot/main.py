@@ -10,9 +10,11 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 def main():
     logging.basicConfig(format=DEFAULT_LOG_FORMAT, datefmt=DEFAULT_LOG_DATEFMT, level=logging.INFO)
+    logging.getLogger().setLevel(logging.INFO)
     logger.info('read configs')
     config_general = GeneralConfigs()
     logging.basicConfig(level=config_general.log_level)
+    logging.getLogger().setLevel(config_general.log_level)
     config_bot = BotConfigs()
 
     SeleniumController(config_bot, config_general).join_voice_channel()

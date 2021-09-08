@@ -4,9 +4,7 @@ from logging import Logger, getLogger
 
 import requests
 
-from urllib3.exceptions import MaxRetryError
-
-from selenium.webdriver import ChromeOptions, Remote, Chrome
+from selenium.webdriver import ChromeOptions, Chrome
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
