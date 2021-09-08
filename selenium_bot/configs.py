@@ -16,8 +16,7 @@ class GeneralConfigs:
         self.test_local_chrome_browser = \
             (os.environ.get('TEST_LOCAL_CHROME_BROWSER') or 'False').lower() == 'true'
         self.selenium_additional_args = os.environ['SELENIUM_ADDITIONAL_ARGS']
-        log_level_raw = logging.getLevelName(os.environ.get('LOG_LEVEL') or 'INFO')
-        self.log_level = log_level_raw if isinstance(log_level_raw, (int, float)) else logging.INFO
+        self.log_level = logging.getLevelName(os.environ.get('LOG_LEVEL') or 'INFO')
 
 
 DEFAULT_AUDIO_CONFIGS = {
@@ -42,3 +41,6 @@ DEFAULT_AUDIO_CONFIGS = {
     'autoSelectDeviceShow': False,  # set to False to auto detect the default devices of your OS
     'lastConnectAudioInfo': {}
 }
+
+DEFAULT_LOG_FORMAT = 'Selenium Bot: %(asctime)s %(levelname)s %(name)s: %(message)s'
+DEFAULT_LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
