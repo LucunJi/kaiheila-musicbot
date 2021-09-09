@@ -35,7 +35,7 @@
 
 1. 你可以直接从 Docker 拉取镜像并运行， 当然你得事先在当前目录下准备好 `.env` 以及 `botcfg.env` 这两个配置文件，并且把需要播放的音乐都放进 `test-musics` 这个文件夹
 
-    `docker run -d --shm-size=2g -v $PWD/test-musics:/app/test-musics:ro --env-file botcfg.env --env-file .env --name kaiheila-musicbot lucunji/kaiheila-musicbot:0.0.1`
+    `docker run -d --shm-size=2g -v $PWD/test-musics:/app/test-musics:ro --env-file botcfg.env --env-file .env --name kaiheila-musicbot lucunji/kaiheila-musicbot:0.0.2`
 
 
 2. 或者，你可以下载这个 GitHub 仓库，然后依次运行 `build-container.sh` 和 `run-container.sh` 这两个脚本。
