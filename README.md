@@ -1,5 +1,7 @@
 # Kaiheila Musicbot（开黑啦音乐 bot）
 
+**由于 userbot 违反开黑啦的用户守则，这个项目已经停止开发。有类似需求的人可以使用 [Kyouka](https://github.com/shuyangzhang/Kyouka)**
+
 ## 简介/Intro
 
 这个 bot 可以在开黑啦的语音频道中播放音乐。
